@@ -1,0 +1,4 @@
+az group create --name carlosgroup --location eastus2
+az network vnet create --name vnet-1  --resource-group carlosgroup --address-prefix 10.0.0.0/16 --subnet-name subnet-1 --subnet-prefixes 10.0.0.0/24
+az network vnet subnet create --name Subnet1 --resource-group carlosgroup --vnet-name vnet-1 --address-prefix 10.0.1.0/26
+az vm create  --resource-group carlosgroup --name moodyVM --image UbuntuLTS --size Standard_DS1_v2 --admin-username carlosvm --admin-password Us0102030405--authentication-type password
