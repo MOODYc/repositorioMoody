@@ -1,0 +1,103 @@
+CASO: Desplegar una maquina virtual con infraestructura redundante (Availavility zone)
+
+
+AUTORES:
+
+
+->  Carlos Jose Cruz Moody.
+->	Luis Medrano Mercado.
+->	Uriel Carballo Quintanilla.
+->	Marlon Enrique Argueta Solis. 
+->  cesar lenin benavente caceres 
+
+
+
+
+
+Introducción:
+
+En el ámbito de la computación en la nube, la disponibilidad y la tolerancia a fallos son aspectos fundamentales para garantizar el funcionamiento continuo de las aplicaciones y servicios. Para lograr altos niveles de disponibilidad, es esencial contar con una infraestructura sólida y redundante que pueda resistir y recuperarse de posibles interrupciones.
+
+En este informe, se abordará la implementación de una máquina virtual (VM) con infraestructura redundante en Azure, utilizando las Availability Zones (zonas de disponibilidad) proporcionadas por la plataforma. Las Availability Zones son áreas físicas aisladas dentro de una región de Azure, que cuentan con su propia alimentación eléctrica, refrigeración y redes. Al desplegar recursos en diferentes zonas de disponibilidad, se logra una mayor resiliencia y protección frente a interrupciones.
+
+El objetivo de este informe es presentar los pasos necesarios para crear una infraestructura redundante en Azure, incluyendo la creación de un Resource Group, una Virtual Network (VNET) y Subnet, así como el despliegue de una máquina virtual con alta disponibilidad en diferentes Availability Zones.
+
+El informe se estructurará de la siguiente manera: se describirán los pasos para la creación del Resource Group, VNET y Subnet; se explicarán las diferentes configuraciones de infraestructura redundante disponibles en Azure; se presentará un script detallado para implementar la infraestructura; y finalmente, se proporcionará un script adicional para la eliminación de los recursos creados.
+ 
+
+Objetivos.
+
+Objetivos del informe:
+
+1. Comprender la importancia de la infraestructura redundante y las Availability Zones en Azure: El objetivo principal de este informe es proporcionar una comprensión clara sobre la importancia de contar con una infraestructura redundante en la nube y cómo las Availability Zones en Azure ayudan a lograr altos niveles de disponibilidad. Se explicará cómo la distribución de recursos en diferentes zonas de disponibilidad puede mitigar los efectos de las interrupciones y garantizar la continuidad del servicio.
+
+2. Guiar en el proceso de implementación de una máquina virtual con infraestructura redundante.
+
+ 
+
+DESARROLLO
+
+I. Creación de Resource Group, VNET y Subnet
+  
+ El primer paso para implementar una máquina virtual con infraestructura redundante es crear un Resource Group, una VNET y una Subnet. Estos recursos proporcionan el entorno básico para la infraestructura de la VM. A continuación se detalla el paso a paso:
+
+   1.1 Crear un Resource Group:
+       El Resource Group proporciona un contenedor lógico para los recursos relacionados. Puedes crear un Resource Group utilizando el siguiente comando en Azure CLI:
+       
+       ```bash
+       az group create --name myResourceGroup --location eastus
+       ```
+     
+
+   1.2 Crear una Virtual Network (VNET) y una Subnet:
+       La VNET y la Subnet son componentes esenciales para la red en la que se ubicará la máquina virtual. Puedes crear una VNET y una Subnet utilizando el siguiente comando en Azure CLI:
+       
+       ```bash
+       az network vnet create --resource-group myResourceGroup --name myVnet --address-prefixes 10.0.0.0/16 --subnet-name mySubnet --subnet-prefixes 10.0.0.0/24
+       ```
+
+II. Creación de la máquina virtual con infraestructura redundante
+    Una vez que se han creado el Resource Group, la VNET y la Subnet, puedes proceder a implementar la máquina virtual con infraestructura redundante. Azure proporciona diferentes configuraciones para lograr alta disponibilidad. A continuación, se explican dos de las opciones más comunes:
+
+    2.1 Creación de una máquina virtual con un conjunto de disponibilidad (Availability Set):
+        Un conjunto de disponibilidad (Availability Set) es un agrupamiento lógico de máquinas virtuales que ayuda a garantizar que las VM se ubiquen en dominios de falla y dominios de actualización separados. Esto brinda mayor tolerancia a fallos y reducción del impacto de las actualizaciones del hardware o software subyacente. Puedes crear un conjunto de disponibilidad utilizando el siguiente comando en Azure CLI:
+        
+        ```bash
+        az vm availability-set create --resource-group myResourceGroup --name myAvailabilitySet --platform-fault-domain-count 2 --platform-update-domain-count 2
+        ```
+
+    2.2 Creación de máquinas virtuales en diferentes zonas de disponibilidad:
+        
+Otra opción para lograr alta disponibilidad es distribuir las máquinas virtuales en diferentes zonas de disponibilidad dentro de una región. Las zonas de disponibilidad son áreas físicas aisladas con su propia infraestructura de alimentación eléctrica, redes y refrigeración. Para crear máquinas virtuales en diferentes zonas de disponibilidad, puedes utilizar el siguiente comando en Azure CLI:
+        
+        ```bash
+        az vm create --resource-group myResourceGroup --name myVM1 --image UbuntuLTS --admin-username azureuser --generate-ssh-keys --availability-set myAvailabilitySet --zone 1 --vnet-name myVnet --subnet mySubnet
+
+        az vm create --resource-group myResourceGroup --name myVM2 --image UbuntuLTS --admin-username azureuser --generate-ssh-keys --availability-set myAvailabilitySet --zone 2 --vnet-name myVnet --subnet mySubnet
+
+        az vm create --resource-group myResourceGroup --name myVM3 --image UbuntuLTS --admin-username azureuser --generate-ssh-keys --availability-set myAvailabilitySet --zone 3 --vnet-name myVnet --subnet mySubnet
+        ```
+
+     
+
+III. Script para destruir los recursos creados
+    
+ A continuación, se proporciona un script para eliminar los recursos creados anteriormente. Este script asegura una limpieza adecuada de los recursos y evita cargos innecesarios:
+
+     ```bash
+     # Eliminar los recursos creados
+     az group delete --name myResourceGroup --yes --no-wait
+     ```
+
+
+Con estos pasos explicados detalladamente, has aprendido cómo crear un Resource Group, una VNET y Subnet, y cómo desplegar una máquina virtual con infraestructura redundante utilizando Availability Zones en Azure. Este enfoque te permitirá lograr altos niveles de disponibilidad y continuidad del servicio en tu entorno de computación en la nube.
+ 
+
+Conclusión.
+
+
+
+En resumen, la implementación de una máquina virtual con infraestructura redundante utilizando Availability Zones en Azure es fundamental para garantizar altos niveles de disponibilidad y continuidad del servicio en entornos de computación en la nube. 
+
+
+A través de los pasos detallados en el informe, hemos aprendido cómo crear un Resource Group, una VNET y Subnet, y cómo desplegar una máquina virtual con alta disponibilidad utilizando Availability Zones en Azure. Estas configuraciones nos permiten aprovechar los conjuntos de disponibilidad y las zonas de disponibilidad para garantizar que nuestras aplicaciones y servicios estén protegidos frente a fallas de hardware, actualizaciones y otros eventos imprevistos.
